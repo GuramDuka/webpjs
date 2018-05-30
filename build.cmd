@@ -1,7 +1,7 @@
 @echo off
 
 set EMSDK=c:\emsdk
-set EMSDKV=1.38.1
+set EMSDKV=1.38.3
 set EM_CONFIG=c:\Users\duka\.emscripten
 set BINARYEN_ROOT=%EMSDK%\clang\e%EMSDKV%_64bit\binaryen
 set JAVA_HOME=%EMSDK%\java\8.152_64bit
@@ -58,10 +58,12 @@ cd build ^
 		-DCMAKE_BUILD_TYPE=Release ^
 		-G "NMake Makefiles" ^
 		"%wd%" ^
-	&& cmake --build "%wd%\build"
-
+	&& cmake --build "%wd%\build" ^
+	&& js-beautify -t -j -w 80 webpjs.js > webpjs_.js ^
+	&& uglifyjs -b -- webpjs_.js > webpjs__.js ^
+	&& del /f /q webpjs_.js ^
+	&& move /y webpjs__.js webpjs.js >nul ^
+	&& js-beautify -t -j -w 80 webpjs.js > webpjs_.js ^
+	&& move /y webpjs_.js webpjs.js >nul ^
+	&& cd /d "%wd%"
 ::	&& uglifyjs -c -m -- webpjs.js > webpjs_.js && uglifyjs -b -- webpjs_.js > webpjs__.js
-
-cd /d "%wd%"
-
-exit /b 0
